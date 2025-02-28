@@ -3,3 +3,4 @@ fastapi
 g4f
 pydantic
 dotenv
+sqlalchemy
