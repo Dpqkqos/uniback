@@ -14,8 +14,8 @@ app = FastAPI()
 
 # CORS Middleware (разрешение запросов с фронта)
 origins = [
-    "http://localhost:8080",  # Адрес Vue.js приложения
-    "https://your-domain.com"  # Добавьте ваш домен
+    "fsafsafaf-one.vercel.app",  
+    "https://fsafsafaf-one.vercel.app"  
 ]
 
 app.add_middleware(
