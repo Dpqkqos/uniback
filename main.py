@@ -3,7 +3,7 @@ from pydantic import BaseModel
 import sqlite3
 import g4f
 import logging
-
+from fastapi.middleware.cors import CORSMiddleware
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
