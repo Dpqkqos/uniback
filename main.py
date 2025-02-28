@@ -9,7 +9,12 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Разрешить все домены (для разработки)
+    allow_methods=["*"],  # Разрешить все методы (GET, POST, OPTIONS и т.д.)
+    allow_headers=["*"],  # Разрешить все заголовки
+)
 # Модель данных для регистрации
 class RegistrationData(BaseModel):
     telegram_id: str  # Идентификатор пользователя в Telegram
