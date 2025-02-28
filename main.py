@@ -27,7 +27,7 @@ app.add_middleware(
 
 # Модель данных для регистрации
 class RegistrationData(BaseModel):
-    telegram_id: str  # Идентификатор пользователя в Telegram
+    telegram_id: int  # Идентификатор пользователя в Telegram (BigInt)
     lastName: str
     firstName: str
     middleName: str
@@ -49,7 +49,7 @@ def init_db():
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            telegram_id TEXT UNIQUE,
+            telegram_id BIGINT UNIQUE,         -- Изменено на BIGINT
             last_name TEXT,
             first_name TEXT,
             middle_name TEXT,
@@ -120,7 +120,7 @@ def generate_forecast(data: RegistrationData):
 
 # Маршрут для получения прогноза по telegram_id
 @app.get("/forecast/{telegram_id}")
-async def get_forecast(telegram_id: str):
+async def get_forecast(telegram_id: int):  # Изменено на int
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
