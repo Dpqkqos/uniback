@@ -113,9 +113,8 @@ def generate_forecast(data: RegistrationData):
 
         # Используем g4f для генерации прогноза
         response = g4f.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model=g4f.models.gpt_4,
             messages=[{"role": "user", "content": prompt}],
-            provider=g4f.Provider.Bing  # Укажи рабочий провайдер, например Bing
         )
 
         return response if response else "Сегодня будет прекрасный день! Желаю вам удачи!"
