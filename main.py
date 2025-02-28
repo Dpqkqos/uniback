@@ -21,8 +21,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Разрешаем все методы
+    allow_headers=["*"],  # Разрешаем все заголовки
 )
 
 # Модель данных для регистрации
@@ -136,6 +136,11 @@ async def get_forecast(telegram_id: str):
     except Exception as e:
         logger.error(f"Ошибка при получении прогноза: {e}")
         raise HTTPException(status_code=500, detail="Ошибка при получении прогноза")
+
+# Обработка предварительных запросов OPTIONS
+@app.options("/{full_path:path}")
+async def options_handler(full_path: str):
+    return {"message": "CORS preflight request handled"}
 
 # Запуск сервера
 if __name__ == "__main__":
