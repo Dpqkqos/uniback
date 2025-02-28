@@ -1,15 +1,24 @@
-import os
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import sqlite3
 import g4f
 import logging
+import os
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
+
+# Настройка CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Разрешить все домены
+    allow_methods=["*"],  # Разрешить все методы
+    allow_headers=["*"],  # Разрешить все заголовки
+)
 
 # Получаем путь к базе данных из переменной окружения
 DATABASE_PATH = os.getenv("DATABASE_PATH", "app.db")  # По умолчанию 'app.db'
@@ -53,6 +62,11 @@ def init_db():
 
 # Инициализация базы данных при запуске
 init_db()
+
+# Корневой маршрут
+@app.get("/")
+async def root():
+    return {"message": "Welcome to the Forecast API!"}
 
 # Маршрут для регистрации
 @app.post("/register")
