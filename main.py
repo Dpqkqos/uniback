@@ -1,10 +1,9 @@
 from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import sqlite3
 import g4f
 import logging
-import os
+from fastapi.middleware.cors import CORSMiddleware
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
@@ -13,15 +12,18 @@ logger = logging.getLogger(__name__)
 app = FastAPI()
 
 # Настройка CORS
+origins = [
+    "https://webapp.telegram.org",  # URL Telegram Mini App
+    "http://localhost:8080",        # Локальный сервер для тестирования
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Разрешить все домены
-    allow_methods=["*"],  # Разрешить все методы
-    allow_headers=["*"],  # Разрешить все заголовки
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
-
-# Получаем путь к базе данных из переменной окружения
-DATABASE_PATH = os.getenv("DATABASE_PATH", "app.db")  # По умолчанию 'app.db'
 
 # Модель данных для регистрации
 class RegistrationData(BaseModel):
@@ -34,7 +36,7 @@ class RegistrationData(BaseModel):
 
 # Подключение к базе данных
 def get_db_connection():
-    conn = sqlite3.connect(DATABASE_PATH)  # Используем DATABASE_PATH
+    conn = sqlite3.connect('app.db')
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -63,18 +65,10 @@ def init_db():
 # Инициализация базы данных при запуске
 init_db()
 
-# Корневой маршрут
-@app.get("/")
-async def root():
-    return {"message": "Welcome to the Forecast API!"}
-
 # Маршрут для регистрации
 @app.post("/register")
 async def register_user(data: RegistrationData):
     try:
-        # Логируем входящие данные
-        logger.info(f"Received data: {data}")
-
         # Проверяем, существует ли пользователь с таким telegram_id
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -146,5 +140,4 @@ async def get_forecast(telegram_id: str):
 # Запуск сервера
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.getenv("PORT", 8000))  # Используем порт из переменной окружения или 8000 по умолчанию
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    uvicorn.run(app, host="127.0.0.1", port=8000)
