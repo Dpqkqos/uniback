@@ -100,6 +100,7 @@ async def register_user(data: RegistrationData):
 
 
 # Функция для генерации прогноза
+# Функция для генерации прогноза
 def generate_forecast(data: RegistrationData):
     try:
         # Формируем запрос для GPT
@@ -113,13 +114,15 @@ def generate_forecast(data: RegistrationData):
         # Используем g4f для генерации прогноза
         response = g4f.ChatCompletion.create(
             model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}]
+            messages=[{"role": "user", "content": prompt}],
+            provider=g4f.Provider.Bing  # Укажи рабочий провайдер, например Bing
         )
 
-        return response
+        return response if response else "Сегодня будет прекрасный день! Желаю вам удачи!"
     except Exception as e:
         logger.error(f"Ошибка при генерации прогноза: {e}")
         return "Сегодня будет прекрасный день! Желаю вам удачи!"
+
 
 
 # Маршрут для получения прогноза по telegram_id
