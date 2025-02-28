@@ -1,20 +1,19 @@
+import os
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import sqlite3
 import g4f
 import logging
-from fastapi.middleware.cors import CORSMiddleware
+
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Разрешить все домены (для разработки)
-    allow_methods=["*"],  # Разрешить все методы (GET, POST, OPTIONS и т.д.)
-    allow_headers=["*"],  # Разрешить все заголовки
-)
+
+# Получаем путь к базе данных из переменной окружения
+DATABASE_PATH = os.getenv("DATABASE_PATH", "app.db")  # По умолчанию 'app.db'
+
 # Модель данных для регистрации
 class RegistrationData(BaseModel):
     telegram_id: str  # Идентификатор пользователя в Telegram
@@ -26,7 +25,7 @@ class RegistrationData(BaseModel):
 
 # Подключение к базе данных
 def get_db_connection():
-    conn = sqlite3.connect('app.db')
+    conn = sqlite3.connect(DATABASE_PATH)  # Используем DATABASE_PATH
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -130,5 +129,5 @@ async def get_forecast(telegram_id: str):
 # Запуск сервера
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.environ.get("PORT", 8000)) 
+    port = int(os.getenv("PORT", 8000))  # Используем порт из переменной окружения или 8000 по умолчанию
     uvicorn.run(app, host="0.0.0.0", port=port)
