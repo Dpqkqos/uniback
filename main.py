@@ -72,6 +72,9 @@ async def root():
 @app.post("/register")
 async def register_user(data: RegistrationData):
     try:
+        # Логируем входящие данные
+        logger.info(f"Received data: {data}")
+
         # Проверяем, существует ли пользователь с таким telegram_id
         conn = get_db_connection()
         cursor = conn.cursor()
