@@ -37,6 +37,7 @@ class User(Base):
     birth_time = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
     request = Column(String, default="Любовь")
+    avatar_url = Column(String, nullable=True)  # Добавляем поле для аватарки
 
 # Модель эмоций
 class Emotion(Base):
@@ -57,6 +58,7 @@ class UserCreate(BaseModel):
     middle_name: Optional[str] = ""
     birth_date: str
     birth_time: str
+    avatar_url: Optional[str] = None  # Добавляем поле для аватарки
 
 class EmotionCreate(BaseModel):
     telegram_id: int
