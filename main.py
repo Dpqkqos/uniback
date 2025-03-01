@@ -137,12 +137,14 @@ def generate_forecast(telegram_id: int):
     
     prompt = f"Сгенерируй астрологический прогноз на день для человека с именем {user.first_name} {user.last_name}, родившегося {user.birth_date} в {user.birth_time}."
     
-    forecast = g4f.ChatCompletion.create(
-        model=g4f.models.default,
-        messages=[{"role": "user", "content": prompt}]
-    )
-    
-    return {"forecast": forecast}
+    try:
+        forecast = g4f.ChatCompletion.create(
+            model=g4f.models.default,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return {"forecast": forecast}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Ошибка при генерации прогноза: {str(e)}")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
