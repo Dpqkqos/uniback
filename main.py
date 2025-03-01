@@ -7,6 +7,7 @@ from sqlalchemy import create_engine, Column, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import g4f
+import uvicorn
 
 app = FastAPI()
 
@@ -140,3 +141,6 @@ def generate_forecast(telegram_id: int):
     )
     
     return {"forecast": forecast}
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
