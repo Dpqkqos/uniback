@@ -13,10 +13,10 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Можно указать конкретный домен, например, ["https://your-frontend.com"]
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Разрешаем все методы (GET, POST и т. д.)
-    allow_headers=["*"],  # Разрешаем все заголовки
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Подключение к базе данных
