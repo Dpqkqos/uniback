@@ -1,13 +1,31 @@
 from fastapi import FastAPI, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, DeclarativeBase, Mapped, mapped_column
 from pydantic import BaseModel
 from datetime import datetime
 
 # Настройка базы данных
 engine = create_async_engine("sqlite+aiosqlite:///db.sqlite3", echo=True)
 async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+
+# Базовый класс для моделей SQLAlchemy
+class Base(DeclarativeBase):
+    pass
+
+# Модель пользователя
+class User(Base):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    tg_id: Mapped[int] = mapped_column(unique=True)
+    isregistred: Mapped[bool] = mapped_column(default=False)
+    surname: Mapped[str] = mapped_column(nullable=True)
+    name: Mapped[str] = mapped_column(nullable=True)
+    patronymic: Mapped[str] = mapped_column(nullable=True)
+    birth_date: Mapped[str] = mapped_column(nullable=True)
+    birth_time: Mapped[str] = mapped_column(nullable=True)
+    request: Mapped[str] = mapped_column(nullable=True, default="Любовь")
 
 # Модель для регистрации
 class RegistrationData(BaseModel):
@@ -19,6 +37,12 @@ class RegistrationData(BaseModel):
     birth_time: str
 
 app = FastAPI()
+
+@app.on_event("startup")
+async def startup():
+    # Создаем таблицы в базе данных, если они не существуют
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
 @app.get("/api/main/{tg_id}")
 async def check_registration(tg_id: int):
