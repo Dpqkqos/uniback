@@ -7,11 +7,9 @@ from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_
 from pydantic import BaseModel
 from datetime import datetime
 
-# Настройка базы данных
 engine = create_async_engine(url='sqlite+aiosqlite:///db.sqlite3', echo=True)
 async_session = async_sessionmaker(bind=engine, expire_on_commit=False)
 
-# Модели данных
 class Base(AsyncAttrs, DeclarativeBase):
     pass
 
@@ -35,12 +33,10 @@ class Emotion(Base):
     emotion: Mapped[str] = mapped_column(String(256))
     user: Mapped[int] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'))
 
-# Инициализация базы данных
 async def init_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
-# Модель для регистрации
 class RegistrationData(BaseModel):
     tg_id: int
     surname: str
@@ -49,7 +45,6 @@ class RegistrationData(BaseModel):
     birth_date: str
     birth_time: str
 
-# Инициализация FastAPI
 @asynccontextmanager
 async def lifespan(app_: FastAPI):
     await init_db()
@@ -57,16 +52,14 @@ async def lifespan(app_: FastAPI):
 
 app = FastAPI(title="UNI!", lifespan=lifespan)
 
-# Настройка CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Для разработки, в продакшене укажите конкретные домены
+    allow_origins=["*"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Эндпоинты
 @app.get("/api/main/{tg_id}")
 async def check_registration(tg_id: int):
     async with async_session() as session:
