@@ -1,11 +1,11 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, HTTPException, Request, status
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import ForeignKey, String, BigInteger, Date, Time, select
 from sqlalchemy.orm import Mapped, DeclarativeBase, mapped_column
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
 from pydantic import BaseModel
+from datetime import datetime
 
 # Настройка базы данных
 engine = create_async_engine(url='sqlite+aiosqlite:///db.sqlite3', echo=True)
@@ -72,7 +72,7 @@ async def check_registration(tg_id: int):
     async with async_session() as session:
         user = await session.scalar(select(User).where(User.tg_id == tg_id))
         if not user:
-            return JSONResponse({"isregistred": False})
+            return {"isregistred": False}
         return {"isregistred": user.isregistred}
 
 @app.post("/api/register")
